@@ -1,4 +1,4 @@
-package dao;
+package hac.adderspringbackend.dao;
 
 public class ComputeResponse {
 
