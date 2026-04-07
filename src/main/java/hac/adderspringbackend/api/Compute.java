@@ -16,7 +16,7 @@ public class Compute {
     }
 
     /**
-     * Add two numbers
+     * Add two numbers using path parameters
      * @param a
      * @param b
      * @return
@@ -27,16 +27,24 @@ public class Compute {
     }
 
     /**
-     * Add two numbers
+     * Add two numbers using body parameters
      * @param operands a dto object containing the operands
      * @return the result of the addition
      */
     @PostMapping("/add")
     public ComputeResponse addPost(@RequestBody ComputeOperands operands) {
-        return new ComputeResponse(operands.getOperand1() + operands.getOperand2());
+        return new ComputeResponse(
+                operands.getOperand1() + operands.getOperand2(), "Addition successful!"
+        );
     }
 
 
+    /**
+     * Handle the case where the user provides a wrong type of parameter
+     * returns a 400 BAD REQUEST in case of a type mismatch
+     * @param e
+     * @return
+     */
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException e) {
         return ResponseEntity.badRequest()
@@ -44,6 +52,11 @@ public class Compute {
                         + " parameter of type " + e.getRequiredType().getSimpleName());
     }
 
+    /**
+     * Handle all other exceptions, returns a 500 INTERNAL SERVER ERROR
+     * @param e
+     * @return
+     */
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity.internalServerError()

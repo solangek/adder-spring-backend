@@ -4,11 +4,9 @@ public class ComputeOperands {
 
         private int operand1;
         private int operand2;
+        // operation type
+        private String operationType; // e.g., "+", "-", "*", "/"
 
-        public ComputeOperands(int operand1, int operand2) {
-            this.operand1 = operand1;
-            this.operand2 = operand2;
-        }
 
         public int getOperand1() {
             return operand1;
