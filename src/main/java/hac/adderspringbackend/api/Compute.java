@@ -1,7 +1,7 @@
 package hac.adderspringbackend.api;
 
-import hac.adderspringbackend.dao.ComputeOperands;
-import hac.adderspringbackend.dao.ComputeResponse;
+import hac.adderspringbackend.dto.ComputeOperands;
+import hac.adderspringbackend.dto.ComputeResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -9,11 +9,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestController
 @RequestMapping("/api")
 public class Compute {
-
-    @GetMapping("")
-    public String getRoot() {
-        return "Hello World!";
-    }
 
     /**
      * Add two numbers using path parameters
@@ -33,6 +28,11 @@ public class Compute {
      */
     @PostMapping("/add")
     public ComputeResponse addPost(@RequestBody ComputeOperands operands) {
+        // validate operands - in the future we will use spring-boot-starter-validation, and annotate the DTO
+        if (operands.getOperationType() != null && !operands.getOperationType().equals("+"))
+            throw new IllegalArgumentException("Invalid operation type: " + operands.getOperationType());
+
+        // note int + int silently overflows. Should use Math.addExact and map ArithmeticException to 400
         return new ComputeResponse(
                 operands.getOperand1() + operands.getOperand2(), "Addition successful!"
         );
@@ -42,11 +42,12 @@ public class Compute {
     /**
      * Handle the case where the user provides a wrong type of parameter
      * returns a 400 BAD REQUEST in case of a type mismatch
+     * Note: for cleaner/reusable code, we could move this to a separate class annotated with @ControllerAdvice
      * @param e
      * @return
      */
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<String> handleMethodArgumentTypeMismatch (MethodArgumentTypeMismatchException e) {
         return ResponseEntity.badRequest()
                 .body("Invalid input: " + e.getName()
                         + " parameter of type " + e.getRequiredType().getSimpleName());
@@ -54,6 +55,7 @@ public class Compute {
 
     /**
      * Handle all other exceptions, returns a 500 INTERNAL SERVER ERROR
+     * * Note: for cleaner/reusable code, we could move this to a separate class annotated with @ControllerAdvice
      * @param e
      * @return
      */

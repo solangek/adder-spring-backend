@@ -1,4 +1,4 @@
-package hac.adderspringbackend.dao;
+package hac.adderspringbackend.dto;
 
 public class ComputeOperands {
 
@@ -22,5 +22,12 @@ public class ComputeOperands {
 
         public void setOperand2(int operand2) {
             this.operand2 = operand2;
+        }
+
+        public String getOperationType() {
+            return operationType;
+        }
+        public void setOperationType(String operationType) {
+            this.operationType = operationType;
         }
 }
